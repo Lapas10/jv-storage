@@ -16,11 +16,10 @@ public class StorageImpl<K, V> implements Storage<K, V> {
 
     @Override
     public void put(K key, V value) {
-        for (int i = 0; i < size; i++) {
-            if (keys[i] == key || (keys[i] != null && keys[i].equals(key))) {
-                values[i] = value;
-                return;
-            }
+        int index = indexOfKey(key);
+        if (index >= 0) {
+            values[index] = value;
+            return;
         }
 
         if (size < CAPACITY) {
@@ -32,16 +31,21 @@ public class StorageImpl<K, V> implements Storage<K, V> {
 
     @Override
     public V get(K key) {
-        for (int i = 0; i < size; i++) {
-            if (keys[i] == key || (keys[i] != null && keys[i].equals(key))) {
-                return values[i];
-            }
-        }
-        return null;
+        int index = indexOfKey(key);
+        return index >= 0 ? values[index] : null;
     }
 
     @Override
     public int size() {
         return size;
+    }
+
+    private int indexOfKey(K key) {
+        for (int index = 0; index < size; index++) {
+            if (keys[index] == key || (keys[index] != null && keys[index].equals(key))) {
+                return index;
+            }
+        }
+        return -1;
     }
 }
